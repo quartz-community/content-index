@@ -1,91 +1,212 @@
 import path from "node:path";
 import fs from "node:fs/promises";
+import type { Root } from "hast";
 import type {
+  GlobalConfiguration,
   QuartzEmitterPlugin,
-  ProcessedContent,
   BuildCtx,
   FilePath,
   FullSlug,
+  ProcessedContent,
 } from "@quartz-community/types";
-import type { ExampleEmitterOptions } from "./types";
+import { joinSegments } from "@quartz-community/types";
+import { simplifySlug, escapeHTML } from "@quartz-community/utils";
+import { toHtml } from "hast-util-to-html";
 
-const defaultOptions: ExampleEmitterOptions = {
-  manifestSlug: "plugin-manifest",
-  includeFrontmatter: true,
-  metadata: {
-    generator: "Quartz Plugin Template",
-  },
+type SimpleSlug = string & { _brand: "SimpleSlug" };
+
+export type ContentIndexMap = Map<FullSlug, ContentDetails>;
+export type ContentDetails = {
+  slug: FullSlug;
+  filePath: FilePath;
+  title: string;
+  links: SimpleSlug[];
+  tags: string[];
+  content: string;
+  richContent?: string;
+  date?: Date;
+  description?: string;
 };
 
-const joinSegments = (...segments: string[]) =>
-  segments
-    .filter((segment) => segment.length > 0)
-    .join("/")
-    .replace(/\/+/g, "/") as FilePath;
+interface Options {
+  enableSiteMap: boolean;
+  enableRSS: boolean;
+  rssLimit?: number;
+  rssFullHtml: boolean;
+  rssSlug: string;
+  includeEmptyFiles: boolean;
+  rssRecentNotesText?: string;
+  rssLastFewNotesText?: (count: number) => string;
+}
 
-const writeFile = async (
-  outputDir: string,
-  slug: FullSlug,
-  ext: `.${string}` | "",
-  content: string,
-) => {
-  const outputPath = joinSegments(outputDir, `${slug}${ext}`) as FilePath;
-  await fs.mkdir(path.dirname(outputPath), { recursive: true });
-  await fs.writeFile(outputPath, content);
-  return outputPath;
+const defaultOptions: Options = {
+  enableSiteMap: true,
+  enableRSS: true,
+  rssLimit: 10,
+  rssFullHtml: false,
+  rssSlug: "index",
+  includeEmptyFiles: true,
+  rssRecentNotesText: "Recent notes",
+  rssLastFewNotesText: (count) => `Last ${count} notes`,
 };
 
-/**
- * Example emitter that writes a JSON manifest of content metadata.
- */
-export const ExampleEmitter: QuartzEmitterPlugin<Partial<ExampleEmitterOptions>> = (
-  userOptions?: Partial<ExampleEmitterOptions>,
-) => {
-  const options = { ...defaultOptions, ...userOptions };
-  const emitManifest = async (ctx: BuildCtx, content: ProcessedContent[]) => {
-    const manifest = {
-      ...options.metadata,
-      generatedAt: new Date().toISOString(),
-      pages: content.map(([_tree, vfile]) => {
-        const frontmatter = (vfile.data?.frontmatter ?? {}) as {
-          title?: string;
-          tags?: string[];
-          [key: string]: unknown;
-        };
-        return {
-          slug: vfile.data?.slug ?? null,
-          title: frontmatter.title ?? null,
-          tags: frontmatter.tags ?? null,
-          filePath: vfile.data?.filePath ?? null,
-          frontmatter: options.includeFrontmatter ? frontmatter : undefined,
-        };
-      }),
-    };
+const write = async (args: {
+  ctx: BuildCtx;
+  content: string;
+  slug: FullSlug;
+  ext: string;
+}): Promise<FilePath> => {
+  const pathToPage = joinSegments(args.ctx.argv.output, args.slug + args.ext) as FilePath;
+  const dir = path.dirname(pathToPage);
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(pathToPage, args.content);
+  return pathToPage;
+};
 
-    let json = `${JSON.stringify(manifest, null, 2)}\n`;
-    if (options.transformManifest) {
-      json = options.transformManifest(json);
+function getDate(cfg: GlobalConfiguration, data: Record<string, unknown>): Date | undefined {
+  return (data.dates as Record<string, Date> | undefined)?.[cfg.defaultDateType ?? "modified"];
+}
+
+function generateSiteMap(cfg: GlobalConfiguration, idx: ContentIndexMap): string {
+  const base = cfg.baseUrl ?? "";
+  const createURLEntry = (slug: SimpleSlug, content: ContentDetails): string => `<url>
+    <loc>https://${joinSegments(base, encodeURI(slug))}</loc>
+    ${content.date && `<lastmod>${content.date.toISOString()}</lastmod>`}
+  </url>`;
+  const urls = Array.from(idx)
+    .map(([slug, content]) => createURLEntry(simplifySlug(slug) as SimpleSlug, content))
+    .join("");
+  return `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls}</urlset>`;
+}
+
+function generateRSSFeed(
+  cfg: GlobalConfiguration,
+  idx: ContentIndexMap,
+  options: Options,
+  limit?: number,
+): string {
+  const base = cfg.baseUrl ?? "";
+  const pageTitle = cfg.pageTitle ?? "";
+  const recentNotesText = options.rssRecentNotesText ?? "Recent notes";
+  const lastFewNotesText =
+    options.rssLastFewNotesText ?? ((count: number) => `Last ${count} notes`);
+
+  const createURLEntry = (slug: SimpleSlug, content: ContentDetails): string => `<item>
+    <title>${escapeHTML(content.title)}</title>
+    <link>https://${joinSegments(base, encodeURI(slug))}</link>
+    <guid>https://${joinSegments(base, encodeURI(slug))}</guid>
+    <description><![CDATA[ ${content.richContent ?? content.description} ]]></description>
+    <pubDate>${content.date?.toUTCString()}</pubDate>
+  </item>`;
+
+  const items = Array.from(idx)
+    .sort(([_, f1], [__, f2]) => {
+      if (f1.date && f2.date) {
+        return f2.date.getTime() - f1.date.getTime();
+      } else if (f1.date && !f2.date) {
+        return -1;
+      } else if (!f1.date && f2.date) {
+        return 1;
+      }
+
+      return f1.title.localeCompare(f2.title);
+    })
+    .map(([slug, content]) => createURLEntry(simplifySlug(slug) as SimpleSlug, content))
+    .slice(0, limit ?? idx.size)
+    .join("");
+
+  const description = `${
+    limit ? lastFewNotesText(limit) : recentNotesText
+  } on ${escapeHTML(pageTitle)}`;
+
+  return `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+      <title>${escapeHTML(pageTitle)}</title>
+      <link>https://${base}</link>
+      <description>${description}</description>
+      <generator>Quartz -- quartz.jzhao.xyz</generator>
+      ${items}
+    </channel>
+  </rss>`;
+}
+
+export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
+  const options = { ...defaultOptions, ...opts };
+  const emitAll = async (ctx: BuildCtx, content: ProcessedContent[]): Promise<FilePath[]> => {
+    const cfg = ctx.cfg.configuration;
+    const linkIndex: ContentIndexMap = new Map();
+    for (const [tree, file] of content) {
+      const data = (file.data as Record<string, unknown>) ?? {};
+      const slug = data.slug as FullSlug;
+      const date = getDate(cfg, data) ?? new Date();
+      const text = data.text as string | undefined;
+      if (options.includeEmptyFiles || (text && text !== "")) {
+        const frontmatter = (data.frontmatter as Record<string, unknown> | undefined) ?? {};
+        linkIndex.set(slug, {
+          slug,
+          filePath: data.relativePath as FilePath,
+          title: (frontmatter.title as string) ?? "",
+          links: (data.links as SimpleSlug[] | undefined) ?? [],
+          tags: (frontmatter.tags as string[] | undefined) ?? [],
+          content: text ?? "",
+          richContent: options.rssFullHtml
+            ? escapeHTML(toHtml(tree as Root, { allowDangerousHtml: true }))
+            : undefined,
+          date: date,
+          description: (data.description as string | undefined) ?? "",
+        });
+      }
     }
 
-    const output = await writeFile(
-      ctx.argv.output,
-      options.manifestSlug as FullSlug,
-      ".json",
-      json,
+    const outputs: FilePath[] = [];
+    if (options.enableSiteMap) {
+      outputs.push(
+        await write({
+          ctx,
+          content: generateSiteMap(cfg, linkIndex),
+          slug: "sitemap" as FullSlug,
+          ext: ".xml",
+        }),
+      );
+    }
+
+    if (options.enableRSS) {
+      outputs.push(
+        await write({
+          ctx,
+          content: generateRSSFeed(cfg, linkIndex, options, options.rssLimit),
+          slug: (options.rssSlug ?? "index") as FullSlug,
+          ext: ".xml",
+        }),
+      );
+    }
+
+    const fp = joinSegments("static", "contentIndex") as unknown as FullSlug;
+    const simplifiedIndex = Object.fromEntries(
+      Array.from(linkIndex).map(([slug, content]) => {
+        delete content.description;
+        delete content.date;
+        return [slug, content];
+      }),
     );
-    return [output];
+
+    outputs.push(
+      await write({
+        ctx,
+        content: JSON.stringify(simplifiedIndex),
+        slug: fp,
+        ext: ".json",
+      }),
+    );
+
+    return outputs;
   };
 
   return {
-    name: "ExampleEmitter",
-    async emit(ctx, content, _resources) {
-      return emitManifest(ctx, content);
-    },
-    async *partialEmit(ctx, content, _resources, _changeEvents) {
-      const outputPaths = await emitManifest(ctx, content);
-      for (const outputPath of outputPaths) {
-        yield outputPath;
-      }
-    },
+    name: "ContentIndex",
+    emit: (ctx, content) => emitAll(ctx, content),
+    // RSS auto-discovery link tag should be added via a component plugin or manually in the layout.
+    partialEmit: (ctx, content) => emitAll(ctx, content),
   };
 };

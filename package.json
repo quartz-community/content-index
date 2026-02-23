@@ -56,6 +56,8 @@
     "@quartz-community/types": "github:quartz-community/types",
     "@quartz-community/utils": "github:quartz-community/utils",
     "hast-util-to-html": "^9.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3",
     "vfile": "^6.0.3"
   },
   "devDependencies": {
@@ -67,8 +69,6 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.6.2",
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.3",
     "vitest": "^2.1.9"
   },
   "quartz": {

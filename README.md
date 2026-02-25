@@ -10,15 +10,28 @@ npx quartz plugin add github:quartz-community/content-index
 
 ## Usage
 
-```ts
-// quartz.config.ts
+```yaml title="quartz.config.yaml"
+plugins:
+  - source: github:quartz-community/content-index
+    enabled: true
+    options:
+      enableSiteMap: true
+      enableRSS: true
+```
+
+For advanced use cases, you can override in TypeScript:
+
+```ts title="quartz.ts (override)"
 import * as ExternalPlugin from "./.quartz/plugins";
 
-const config: QuartzConfig = {
-  plugins: {
-    emitters: [ExternalPlugin.ContentIndex()],
-  },
-};
+ExternalPlugin.ContentIndex({
+  enableSiteMap: true,
+  enableRSS: true,
+  rssLimit: 10,
+  rssFullHtml: false,
+  rssSlug: "index",
+  includeEmptyFiles: true,
+});
 ```
 
 ## Configuration
@@ -34,7 +47,7 @@ const config: QuartzConfig = {
 
 ## Documentation
 
-See the [Quartz documentation](https://quartz.jzhao.xyz/) for more information.
+See the [Quartz documentation](https://quartz.jzhao.xyz/plugins/ContentIndex) for more information.
 
 ## License
 

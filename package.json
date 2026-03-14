@@ -71,10 +71,11 @@
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
+    "hast-util-to-html": "^9.0.0",
     "prettier": "^3.6.2",
-    "vitest": "^2.1.9",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
   },
   "quartz": {
     "name": "content-index",

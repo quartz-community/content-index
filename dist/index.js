@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import { joinSegments } from '@quartz-community/types';
 import { escapeHTML, simplifySlug } from '@quartz-community/utils';
+import { getDate } from '@quartz-community/utils/sort';
 
 var __defProp = Object.defineProperty;
 var __export = (target, all2) => {
@@ -2226,9 +2227,6 @@ var write = async (args) => {
   await fs.writeFile(pathToPage, args.content);
   return pathToPage;
 };
-function getDate(cfg, data) {
-  return data.dates?.[cfg.defaultDateType ?? "modified"];
-}
 function generateSiteMap(cfg, idx) {
   const base = cfg.baseUrl ?? "";
   const createURLEntry = (slug, content) => `<url>
@@ -2280,7 +2278,7 @@ var ContentIndex = (opts) => {
     for (const [tree, file] of content) {
       const data = file.data ?? {};
       const slug = data.slug;
-      const date = getDate(cfg, data) ?? /* @__PURE__ */ new Date();
+      const date = getDate(data) ?? /* @__PURE__ */ new Date();
       const text2 = data.text;
       if (options.includeEmptyFiles || text2 && text2 !== "") {
         const frontmatter = data.frontmatter ?? {};

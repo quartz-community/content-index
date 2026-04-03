@@ -7,10 +7,12 @@ import type {
   BuildCtx,
   FilePath,
   FullSlug,
+  QuartzPluginData,
   ProcessedContent,
 } from "@quartz-community/types";
 import { joinSegments } from "@quartz-community/types";
 import { simplifySlug, escapeHTML } from "@quartz-community/utils";
+import { getDate } from "@quartz-community/utils/sort";
 import { toHtml } from "hast-util-to-html";
 
 type SimpleSlug = string & { _brand: "SimpleSlug" };
@@ -62,10 +64,6 @@ const write = async (args: {
   await fs.writeFile(pathToPage, args.content);
   return pathToPage;
 };
-
-function getDate(cfg: GlobalConfiguration, data: Record<string, unknown>): Date | undefined {
-  return (data.dates as Record<string, Date> | undefined)?.[cfg.defaultDateType ?? "modified"];
-}
 
 function generateSiteMap(cfg: GlobalConfiguration, idx: ContentIndexMap): string {
   const base = cfg.baseUrl ?? "";
@@ -139,7 +137,7 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
     for (const [tree, file] of content) {
       const data = (file.data as Record<string, unknown>) ?? {};
       const slug = data.slug as FullSlug;
-      const date = getDate(cfg, data) ?? new Date();
+      const date = getDate(data as QuartzPluginData) ?? new Date();
       const text = data.text as string | undefined;
       if (options.includeEmptyFiles || (text && text !== "")) {
         const frontmatter = (data.frontmatter as Record<string, unknown> | undefined) ?? {};

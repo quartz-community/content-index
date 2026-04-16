@@ -9,13 +9,12 @@ import type {
   FullSlug,
   QuartzPluginData,
   ProcessedContent,
+  SimpleSlug,
 } from "@quartz-community/types";
 import { joinSegments } from "@quartz-community/types";
 import { simplifySlug, escapeHTML } from "@quartz-community/utils";
 import { getDate } from "@quartz-community/utils/sort";
 import { toHtml } from "hast-util-to-html";
-
-type SimpleSlug = string & { _brand: "SimpleSlug" };
 
 export type ContentIndexMap = Map<FullSlug, ContentDetails>;
 export type ContentDetails = {

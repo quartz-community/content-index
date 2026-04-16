@@ -1,9 +1,6 @@
-import { FullSlug, FilePath, QuartzEmitterPlugin } from '@quartz-community/types';
+import { FullSlug, FilePath, SimpleSlug, QuartzEmitterPlugin } from '@quartz-community/types';
 export { QuartzEmitterPlugin } from '@quartz-community/types';
 
-type SimpleSlug = string & {
-    _brand: "SimpleSlug";
-};
 type ContentIndexMap = Map<FullSlug, ContentDetails>;
 type ContentDetails = {
     slug: FullSlug;

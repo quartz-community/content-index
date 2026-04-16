@@ -1248,7 +1248,7 @@ var svg2 = merge([aria, svg, xlink, xmlns, xml], "svg");
 function stringify2(values) {
   return values.join(" ").trim();
 }
-"function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout;
+"function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, Math.random().toString(8);
 
 // node_modules/@quartz-community/utils/dist/index.js
 function simplifySlug(fp) {

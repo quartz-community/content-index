@@ -7,12 +7,12 @@ var __export = (target, all2) => {
     __defProp(target, name, { get: all2[name], enumerable: true });
 };
 
-// node_modules/@quartz-community/types/dist/index.js
+// ../types/dist/index.js
 function joinSegments(...segments) {
   return segments.filter((segment) => segment.length > 0).join("/").replace(/\/+/g, "/");
 }
 
-// node_modules/comma-separated-tokens/index.js
+// ../../node_modules/.pnpm/comma-separated-tokens@2.0.3/node_modules/comma-separated-tokens/index.js
 function stringify(values, options) {
   const settings = options || {};
   const input = values[values.length - 1] === "" ? [...values, ""] : values;
@@ -21,7 +21,7 @@ function stringify(values, options) {
   ).trim();
 }
 
-// node_modules/hast-util-whitespace/lib/index.js
+// ../../node_modules/.pnpm/hast-util-whitespace@3.0.0/node_modules/hast-util-whitespace/lib/index.js
 var re = /[ \t\n\f\r]/g;
 function whitespace(thing) {
   return typeof thing === "object" ? thing.type === "text" ? empty(thing.value) : false : empty(thing);
@@ -30,7 +30,7 @@ function empty(value) {
   return value.replace(re, "") === "";
 }
 
-// node_modules/property-information/lib/util/schema.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/util/schema.js
 var Schema = class {
   /**
    * @param {SchemaType['property']} property
@@ -54,7 +54,7 @@ Schema.prototype.normal = {};
 Schema.prototype.property = {};
 Schema.prototype.space = void 0;
 
-// node_modules/property-information/lib/util/merge.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/util/merge.js
 function merge(definitions, space) {
   const property = {};
   const normal = {};
@@ -65,12 +65,12 @@ function merge(definitions, space) {
   return new Schema(property, normal, space);
 }
 
-// node_modules/property-information/lib/normalize.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/normalize.js
 function normalize(value) {
   return value.toLowerCase();
 }
 
-// node_modules/property-information/lib/util/info.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/util/info.js
 var Info = class {
   /**
    * @param {string} property
@@ -98,7 +98,7 @@ Info.prototype.property = "";
 Info.prototype.spaceSeparated = false;
 Info.prototype.space = void 0;
 
-// node_modules/property-information/lib/util/types.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/util/types.js
 var types_exports = {};
 __export(types_exports, {
   boolean: () => boolean,
@@ -121,7 +121,7 @@ function increment() {
   return 2 ** ++powers;
 }
 
-// node_modules/property-information/lib/util/defined-info.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/util/defined-info.js
 var checks = (
   /** @type {ReadonlyArray<keyof typeof types>} */
   Object.keys(types_exports)
@@ -159,7 +159,7 @@ function mark(values, key2, value) {
   }
 }
 
-// node_modules/property-information/lib/util/create.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/util/create.js
 function create(definition) {
   const properties = {};
   const normals = {};
@@ -180,7 +180,7 @@ function create(definition) {
   return new Schema(properties, normals, definition.space);
 }
 
-// node_modules/property-information/lib/aria.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/aria.js
 var aria = create({
   properties: {
     ariaActiveDescendant: null,
@@ -238,17 +238,17 @@ var aria = create({
   }
 });
 
-// node_modules/property-information/lib/util/case-sensitive-transform.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/util/case-sensitive-transform.js
 function caseSensitiveTransform(attributes, attribute) {
   return attribute in attributes ? attributes[attribute] : attribute;
 }
 
-// node_modules/property-information/lib/util/case-insensitive-transform.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/util/case-insensitive-transform.js
 function caseInsensitiveTransform(attributes, property) {
   return caseSensitiveTransform(attributes, property.toLowerCase());
 }
 
-// node_modules/property-information/lib/html.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/html.js
 var html = create({
   attributes: {
     acceptcharset: "accept-charset",
@@ -268,6 +268,7 @@ var html = create({
     allowFullScreen: boolean,
     allowPaymentRequest: boolean,
     allowUserMedia: boolean,
+    alpha: boolean,
     alt: null,
     as: null,
     async: boolean,
@@ -281,8 +282,12 @@ var html = create({
     checked: boolean,
     cite: null,
     className: spaceSeparated,
+    closedBy: null,
+    colorSpace: null,
     cols: number,
-    colSpan: null,
+    colSpan: number,
+    command: null,
+    commandFor: null,
     content: null,
     contentEditable: booleanish,
     controls: boolean,
@@ -462,8 +467,10 @@ var html = create({
     seamless: boolean,
     selected: boolean,
     shadowRootClonable: boolean,
+    shadowRootCustomElementRegistry: boolean,
     shadowRootDelegatesFocus: boolean,
     shadowRootMode: null,
+    shadowRootSerializable: boolean,
     shape: null,
     size: number,
     sizes: null,
@@ -600,8 +607,11 @@ var html = create({
     allowTransparency: null,
     autoCorrect: null,
     autoSave: null,
+    credentialless: boolean,
     disablePictureInPicture: boolean,
     disableRemotePlayback: boolean,
+    exportParts: commaSeparated,
+    part: spaceSeparated,
     prefix: null,
     property: null,
     results: number,
@@ -612,7 +622,7 @@ var html = create({
   transform: caseInsensitiveTransform
 });
 
-// node_modules/property-information/lib/svg.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/svg.js
 var svg = create({
   attributes: {
     accentHeight: "accent-height",
@@ -655,6 +665,7 @@ var svg = create({
     markerEnd: "marker-end",
     markerMid: "marker-mid",
     markerStart: "marker-start",
+    maskType: "mask-type",
     navDown: "nav-down",
     navDownLeft: "nav-down-left",
     navDownRight: "nav-down-right",
@@ -925,6 +936,7 @@ var svg = create({
     markerWidth: null,
     mask: null,
     maskContentUnits: null,
+    maskType: null,
     maskUnits: null,
     mathematical: null,
     max: null,
@@ -1174,7 +1186,7 @@ var svg = create({
   transform: caseSensitiveTransform
 });
 
-// node_modules/property-information/lib/xlink.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/xlink.js
 var xlink = create({
   properties: {
     xLinkActuate: null,
@@ -1191,7 +1203,7 @@ var xlink = create({
   }
 });
 
-// node_modules/property-information/lib/xmlns.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/xmlns.js
 var xmlns = create({
   attributes: { xmlnsxlink: "xmlns:xlink" },
   properties: { xmlnsXLink: null, xmlns: null },
@@ -1199,7 +1211,7 @@ var xmlns = create({
   transform: caseInsensitiveTransform
 });
 
-// node_modules/property-information/lib/xml.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/xml.js
 var xml = create({
   properties: { xmlBase: null, xmlLang: null, xmlSpace: null },
   space: "xml",
@@ -1208,7 +1220,7 @@ var xml = create({
   }
 });
 
-// node_modules/property-information/lib/find.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/lib/find.js
 var cap = /[A-Z]/g;
 var dash = /-[a-z]/g;
 var valid = /^data[-\w.:]+$/i;
@@ -1244,17 +1256,17 @@ function camelcase($0) {
   return $0.charAt(1).toUpperCase();
 }
 
-// node_modules/property-information/index.js
+// ../../node_modules/.pnpm/property-information@7.2.0/node_modules/property-information/index.js
 var html2 = merge([aria, html, xlink, xmlns, xml], "html");
 var svg2 = merge([aria, svg, xlink, xmlns, xml], "svg");
 
-// node_modules/space-separated-tokens/index.js
+// ../../node_modules/.pnpm/space-separated-tokens@2.0.2/node_modules/space-separated-tokens/index.js
 function stringify2(values) {
   return values.join(" ").trim();
 }
 "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, Math.random().toString(8);
 
-// node_modules/@quartz-community/utils/dist/index.js
+// ../utils/dist/index.js
 function simplifySlug(fp) {
   const res = stripSlashes(trimSuffix(fp, "index"));
   return res.length === 0 ? "/" : res;
@@ -1278,7 +1290,7 @@ function escapeHTML(unsafe) {
   return unsafe.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
-// node_modules/@quartz-community/utils/dist/sort.js
+// ../utils/dist/sort.js
 function getDate(data) {
   const defaultDateType = data.defaultDateType;
   if (!defaultDateType) {
@@ -1288,7 +1300,7 @@ function getDate(data) {
   return dates?.[defaultDateType];
 }
 
-// node_modules/html-void-elements/index.js
+// ../../node_modules/.pnpm/html-void-elements@3.0.0/node_modules/html-void-elements/index.js
 var htmlVoidElements = [
   "area",
   "base",
@@ -1312,7 +1324,7 @@ var htmlVoidElements = [
   "wbr"
 ];
 
-// node_modules/zwitch/index.js
+// ../../node_modules/.pnpm/zwitch@2.0.4/node_modules/zwitch/index.js
 var own2 = {}.hasOwnProperty;
 function zwitch(key2, options) {
   const settings = options || {};
@@ -1333,7 +1345,7 @@ function zwitch(key2, options) {
   return one2;
 }
 
-// node_modules/stringify-entities/lib/core.js
+// ../../node_modules/.pnpm/stringify-entities@4.0.4/node_modules/stringify-entities/lib/core.js
 var defaultSubsetRegex = /["&'<>`]/g;
 var surrogatePairsRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 var controlCharactersRegex = (
@@ -1383,21 +1395,21 @@ function charactersToExpression(subset) {
   return new RegExp("(?:" + groups.join("|") + ")", "g");
 }
 
-// node_modules/stringify-entities/lib/util/to-hexadecimal.js
+// ../../node_modules/.pnpm/stringify-entities@4.0.4/node_modules/stringify-entities/lib/util/to-hexadecimal.js
 var hexadecimalRegex = /[\dA-Fa-f]/;
 function toHexadecimal(code, next, omit) {
   const value = "&#x" + code.toString(16).toUpperCase();
   return omit && next && !hexadecimalRegex.test(String.fromCharCode(next)) ? value : value + ";";
 }
 
-// node_modules/stringify-entities/lib/util/to-decimal.js
+// ../../node_modules/.pnpm/stringify-entities@4.0.4/node_modules/stringify-entities/lib/util/to-decimal.js
 var decimalRegex = /\d/;
 function toDecimal(code, next, omit) {
   const value = "&#" + String(code);
   return omit && next && !decimalRegex.test(String.fromCharCode(next)) ? value : value + ";";
 }
 
-// node_modules/character-entities-legacy/index.js
+// ../../node_modules/.pnpm/character-entities-legacy@3.0.0/node_modules/character-entities-legacy/index.js
 var characterEntitiesLegacy = [
   "AElig",
   "AMP",
@@ -1507,7 +1519,7 @@ var characterEntitiesLegacy = [
   "yuml"
 ];
 
-// node_modules/character-entities-html4/index.js
+// ../../node_modules/.pnpm/character-entities-html4@2.1.0/node_modules/character-entities-html4/index.js
 var characterEntitiesHtml4 = {
   nbsp: "\xA0",
   iexcl: "\xA1",
@@ -1763,7 +1775,7 @@ var characterEntitiesHtml4 = {
   euro: "\u20AC"
 };
 
-// node_modules/stringify-entities/lib/constant/dangerous.js
+// ../../node_modules/.pnpm/stringify-entities@4.0.4/node_modules/stringify-entities/lib/constant/dangerous.js
 var dangerous = [
   "cent",
   "copy",
@@ -1775,7 +1787,7 @@ var dangerous = [
   "times"
 ];
 
-// node_modules/stringify-entities/lib/util/to-named.js
+// ../../node_modules/.pnpm/stringify-entities@4.0.4/node_modules/stringify-entities/lib/util/to-named.js
 var own3 = {}.hasOwnProperty;
 var characters = {};
 var key;
@@ -1798,7 +1810,7 @@ function toNamed(code, next, omit, attribute) {
   return "";
 }
 
-// node_modules/stringify-entities/lib/util/format-smart.js
+// ../../node_modules/.pnpm/stringify-entities@4.0.4/node_modules/stringify-entities/lib/util/format-smart.js
 function formatSmart(code, next, options) {
   let numeric = toHexadecimal(code, next, options.omitOptionalSemicolons);
   let named;
@@ -1819,12 +1831,12 @@ function formatSmart(code, next, options) {
   return named && (!options.useShortestReferences || named.length < numeric.length) ? named : numeric;
 }
 
-// node_modules/stringify-entities/lib/index.js
+// ../../node_modules/.pnpm/stringify-entities@4.0.4/node_modules/stringify-entities/lib/index.js
 function stringifyEntities(value, options) {
   return core(value, Object.assign({ format: formatSmart }, options));
 }
 
-// node_modules/hast-util-to-html/lib/handle/comment.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/handle/comment.js
 var htmlCommentRegex = /^>|^->|<!--|-->|--!>|<!-$/g;
 var bogusCommentEntitySubset = [">"];
 var commentEntitySubset = ["<", ">"];
@@ -1845,12 +1857,12 @@ function comment(node, _1, _2, state) {
   }
 }
 
-// node_modules/hast-util-to-html/lib/handle/doctype.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/handle/doctype.js
 function doctype(_1, _2, _3, state) {
   return "<!" + (state.settings.upperDoctype ? "DOCTYPE" : "doctype") + (state.settings.tightDoctype ? "" : " ") + "html>";
 }
 
-// node_modules/ccount/index.js
+// ../../node_modules/.pnpm/ccount@2.0.1/node_modules/ccount/index.js
 function ccount(value, character) {
   const source = String(value);
   if (typeof character !== "string") {
@@ -1865,7 +1877,7 @@ function ccount(value, character) {
   return count;
 }
 
-// node_modules/hast-util-to-html/lib/omission/util/siblings.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/omission/util/siblings.js
 var siblingAfter = siblings(1);
 var siblingBefore = siblings(-1);
 var emptyChildren = [];
@@ -1885,7 +1897,7 @@ function siblings(increment2) {
   }
 }
 
-// node_modules/hast-util-to-html/lib/omission/omission.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/omission/omission.js
 var own4 = {}.hasOwnProperty;
 function omission(handlers) {
   return omit;
@@ -1894,7 +1906,7 @@ function omission(handlers) {
   }
 }
 
-// node_modules/hast-util-to-html/lib/omission/closing.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/omission/closing.js
 var closing = omission({
   body,
   caption: headOrColgroupOrCaption,
@@ -1981,7 +1993,7 @@ function cells(_2, index, parent) {
   return !next || next.type === "element" && (next.tagName === "td" || next.tagName === "th");
 }
 
-// node_modules/hast-util-to-html/lib/omission/opening.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/omission/opening.js
 var opening = omission({
   body: body2,
   colgroup,
@@ -2025,7 +2037,7 @@ function tbody2(node, index, parent) {
   return Boolean(head2 && head2.type === "element" && head2.tagName === "tr");
 }
 
-// node_modules/hast-util-to-html/lib/handle/element.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/handle/element.js
 var constants = {
   // See: <https://html.spec.whatwg.org/#attribute-name-state>.
   name: [
@@ -2152,7 +2164,7 @@ function serializeAttribute(state, key2, value) {
   return name + (result ? "=" + result : result);
 }
 
-// node_modules/hast-util-to-html/lib/handle/text.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/handle/text.js
 var textEntitySubset = ["<", "&"];
 function text(node, _2, parent, state) {
   return parent && parent.type === "element" && (parent.tagName === "script" || parent.tagName === "style") ? node.value : stringifyEntities(
@@ -2163,17 +2175,17 @@ function text(node, _2, parent, state) {
   );
 }
 
-// node_modules/hast-util-to-html/lib/handle/raw.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/handle/raw.js
 function raw(node, index, parent, state) {
   return state.settings.allowDangerousHtml ? node.value : text(node, index, parent, state);
 }
 
-// node_modules/hast-util-to-html/lib/handle/root.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/handle/root.js
 function root(node, _1, _2, state) {
   return state.all(node);
 }
 
-// node_modules/hast-util-to-html/lib/handle/index.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/handle/index.js
 var handle = zwitch("type", {
   invalid,
   unknown,
@@ -2190,7 +2202,7 @@ function unknown(node_) {
   throw new Error("Cannot compile unknown node `" + node.type + "`");
 }
 
-// node_modules/hast-util-to-html/lib/index.js
+// ../../node_modules/.pnpm/hast-util-to-html@9.0.5/node_modules/hast-util-to-html/lib/index.js
 var emptyOptions = {};
 var emptyCharacterReferences = {};
 var emptyChildren2 = [];

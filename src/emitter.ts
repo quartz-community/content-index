@@ -186,7 +186,6 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
     const simplifiedIndex = Object.fromEntries(
       Array.from(linkIndex).map(([slug, content]) => {
         delete content.description;
-        delete content.date;
         return [slug, content];
       }),
     );

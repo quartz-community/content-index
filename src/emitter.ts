@@ -133,11 +133,15 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
   const emitAll = async (ctx: BuildCtx, content: ProcessedContent[]): Promise<FilePath[]> => {
     const cfg = ctx.cfg.configuration;
     const linkIndex: ContentIndexMap = new Map();
+    // Pages without a real date (folder and tag listings) must not appear in the RSS feed
+    const undatedSlugs = new Set<FullSlug>();
     for (const [tree, file] of content) {
       const data = (file.data as Record<string, unknown>) ?? {};
       if (data.unlisted === true) continue;
       const slug = data.slug as FullSlug;
-      const date = getDate(data as QuartzPluginData) ?? new Date();
+      const realDate = getDate(data as QuartzPluginData);
+      if (!realDate) undatedSlugs.add(slug);
+      const date = realDate ?? new Date();
       const text = data.text as string | undefined;
       if (options.includeEmptyFiles || (text && text !== "")) {
         const frontmatter = (data.frontmatter as Record<string, unknown> | undefined) ?? {};
@@ -175,7 +179,12 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
       outputs.push(
         await write({
           ctx,
-          content: generateRSSFeed(cfg, linkIndex, options, options.rssLimit),
+          content: generateRSSFeed(
+            cfg,
+            new Map(Array.from(linkIndex).filter(([slug]) => !undatedSlugs.has(slug))),
+            options,
+            options.rssLimit,
+          ),
           slug: (options.rssSlug ?? "index") as FullSlug,
           ext: ".xml",
         }),

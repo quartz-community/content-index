@@ -2,6 +2,14 @@
 
 Generates a sitemap, RSS feed, and content index JSON for full-text search.
 
+> [!IMPORTANT]
+> **Built into Quartz 5.1+.** The content index, sitemap and RSS feed are part of Quartz core now, configured under
+> `configuration.contentIndex` in `quartz.config.yaml` — you don't need this plugin anymore.
+> Existing config entries for it keep working (Quartz applies their options to the built-in and
+> doesn't load this package); run `npx quartz plugin doctor --fix` to update your config.
+> See [Built-in processing](https://quartz.jzhao.xyz/features/built-in-processing).
+> This package is kept for Quartz versions before 5.1.
+
 ## Installation
 
 ```bash

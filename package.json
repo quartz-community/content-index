@@ -110,6 +110,32 @@
       "includeEmptyFiles": {
         "type": "boolean"
       }
+    },
+    "capabilities": {
+      "provides": {
+        "files": [
+          "static/contentIndex.json"
+        ]
+      },
+      "optional": {
+        "data": [
+          {
+            "name": "links",
+            "from": "crawl-links",
+            "reason": "graph view has no edges"
+          },
+          {
+            "name": "text",
+            "from": "description",
+            "reason": "search has no page content to index"
+          },
+          {
+            "name": "frontmatter",
+            "from": "note-properties",
+            "reason": "titles and tags are missing from the index"
+          }
+        ]
+      }
     }
   },
   "engines": {

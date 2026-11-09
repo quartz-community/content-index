@@ -1,6 +1,6 @@
 {
   "name": "@quartz-community/content-index",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Content index emitter plugin for Quartz. Generates sitemap, RSS feed, and content index JSON.",
   "type": "module",
   "license": "MIT",

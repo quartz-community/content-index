@@ -64,14 +64,25 @@ const write = async (args: {
   return pathToPage;
 };
 
-function generateSiteMap(cfg: GlobalConfiguration, idx: ContentIndexMap): string {
+function generateSiteMap(
+  cfg: GlobalConfiguration,
+  idx: ContentIndexMap,
+  undatedSlugs: Set<FullSlug>,
+): string {
   const base = cfg.baseUrl ?? "";
-  const createURLEntry = (slug: SimpleSlug, content: ContentDetails): string => `<url>
+  // <lastmod> is optional: pages without a real date are listed without it
+  const createURLEntry = (
+    slug: SimpleSlug,
+    content: ContentDetails,
+    hasDate: boolean,
+  ): string => `<url>
     <loc>https://${joinSegments(base, encodeURI(slug))}</loc>
-    ${content.date && `<lastmod>${content.date.toISOString()}</lastmod>`}
+    ${hasDate && content.date ? `<lastmod>${content.date.toISOString()}</lastmod>` : ""}
   </url>`;
   const urls = Array.from(idx)
-    .map(([slug, content]) => createURLEntry(simplifySlug(slug) as SimpleSlug, content))
+    .map(([slug, content]) =>
+      createURLEntry(simplifySlug(slug) as SimpleSlug, content, !undatedSlugs.has(slug)),
+    )
     .join("");
   return `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls}</urlset>`;
 }
@@ -168,7 +179,7 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
       outputs.push(
         await write({
           ctx,
-          content: generateSiteMap(cfg, linkIndex),
+          content: generateSiteMap(cfg, linkIndex, undatedSlugs),
           slug: "sitemap" as FullSlug,
           ext: ".xml",
         }),
